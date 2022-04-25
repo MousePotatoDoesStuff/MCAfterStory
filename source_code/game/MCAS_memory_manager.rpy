@@ -27,6 +27,8 @@ init -1 python:
                 if e not in current:
                     return None
                 current=current[e]
+            if cur_time is not None and 'ctime' in current and current['ctime']>cur_time:
+                return None
             return current
         def generate_memory_label(self, path, format=0, useMempath=True):
             var_label="invalid_label"

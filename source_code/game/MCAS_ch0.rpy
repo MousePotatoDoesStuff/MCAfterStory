@@ -261,7 +261,7 @@ label ch0_Sayori:
     $ checkIDtheft=MC.load(['4e'])
     if checkIDtheft is not None:
         mc "The one you tried to pass yourself off as?"
-    $ checkOtherQuestion=MC.load(['Monika'],var_time)
+    $ checkOtherQuestion=MC.load(['Monika'],cur_time=var_time)
     if checkOtherQuestion:
         mc "She also looks nothing like you."
     else:
@@ -275,7 +275,7 @@ label ch0_Monika:
     $ checkIDtheft=MC.load(['4d'])
     if checkIDtheft is not None:
         mc "The one you tried to pass yourself off as?"
-    $ checkOtherQuestion=MC.load(['Sayori'],var_time)
+    $ checkOtherQuestion=MC.load(['Sayori'],cur_time=var_time)
     if checkOtherQuestion:
         mc "She also looks nothing like you."
     else:

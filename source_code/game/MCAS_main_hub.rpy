@@ -149,15 +149,16 @@ label call_event(var_path=['base','main',0,0], isFirstCall=True):
         var_label=None
         fit_size=6
         var_label=MC.generate_memory_label(var_path)
-    call expression var_label from _call_expression_11 # Call label
     if isFirstCall:
         $ var_time=datetime.datetime.now()
+    else:
+        $ var_data=MC.load(var_path)
+        $ var_time=var_data['ctime']
+    call expression var_label from _call_expression_11 # Call label
+    if isFirstCall:
         call adv_cho_menu_call(cho_menu_list,fit_size) from _call_adv_cho_menu_call_2
         $ MC.save(var_path,{'final':cho_menu_result,'ctime':var_time})
     else:
-        python:
-            var_data=MC.load(var_path)
-            var_time=var_data['ctime']
         if len(cho_menu_list)!=0:
             python:
                 if 'final' in var_data:
