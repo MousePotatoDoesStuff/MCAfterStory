@@ -1512,7 +1512,7 @@ screen dialog(message, ok_action):
             spacing 30
 
             label _(message):
-                style "mcas_init_text"
+                style "confirm_prompt"
                 xalign 0.5
 
             hbox:

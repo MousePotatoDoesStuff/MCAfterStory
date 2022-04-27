@@ -383,13 +383,13 @@ label splashscreen:
         # get DDLC's files."
         python:
             dialog_content='''[config.name] is a Doki Doki Literature Club! fan mod that is not affiliated in anyway with Team Salvato.
+
 It is designed to be played only after the official game has been completed,
 its plot takes place directly after the normal ending,
-and it contains spoilers for the official game.'''
-        call screen dialog(dialog_content,[Hide("dialog"), Return()])
-        python:
-            dialog_content='''Game files for Doki Doki Literature Club! are required to play this mod
-            and can be downloaded for free at: https://ddlc.moe or on Steam.'''
+and it contains spoilers for the official game.
+
+Game files for Doki Doki Literature Club! are required to play this mod
+and can be downloaded for free at: https://ddlc.moe or on Steam.'''
         call screen dialog(dialog_content, [Hide("dialog"), Return()])
 
         menu:
