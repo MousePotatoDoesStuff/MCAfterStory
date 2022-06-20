@@ -1,4 +1,4 @@
-label intro_main:label
+label intro_main:
     $ eventCallType=1
     call ch0_0
     call ch0_1
@@ -14,6 +14,7 @@ label ch0_0:
     scene bg residential_day
     with dissolve_scene_full
     play music t2
+    mc "Ugh..."
     "...I hate Mondays."
     "Mornings are usually the worst, being surrounded by couples and friend groups walking to school together."
     "Meanwhile, I've always walked to school alone."

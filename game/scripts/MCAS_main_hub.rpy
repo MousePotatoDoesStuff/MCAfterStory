@@ -132,6 +132,7 @@ label jump_MC_epiphany: # This part initiates MC's memories.
 
 label MC_start: # This part initiates the other stuff.
     python:
+        renpy.config.window_title="MC After Story: Now with 18% less bugs!"
         if persistent.current_memory is not None:
             persistent.auto_open.append(persistent.current_memory)
             persistent.current_memory = None
@@ -315,7 +316,7 @@ label call_event(var_path=['base','main',0,0], eventCallType=1):
                 "Error: Memory not found.\n Path: [dump2] Traceback: [dump]"
                 "Close program":
                     jump exit_to_menu
-                "Remove label
+                "Remove label from memory":
                     return
                 "Raise exception":
                     $ raise Exception('MCAS: Manually raised memory access exception')
@@ -333,7 +334,7 @@ label call_event(var_path=['base','main',0,0], eventCallType=1):
             "[diagnosis]"
             "Close program":
                 jump exit_to_menu
-            "Remove label
+            "Remove label drom memory":
                 return
             "Raise exception":
                 $ raise Exception('MCAS: Manually raised memory access exception')
@@ -406,7 +407,7 @@ label adv_cho_menu_call(cho_menu_list=[('Example':MC_hub_mainloop)],fit_size=5,m
             adv_cho_menu_list+=[('Next',None)][:adv_prefixes[1]]
             if offer_return:
                 adv_cho_menu_list.append(['Return',None])
-        call cho_menu_call(adv_cho_menu_list)_1
+        call cho_menu_call(adv_cho_menu_list)
         if cho_menu_result==0 and adv_prefixes[0]:
             $ cho_index=cho_index-fit_size if cho_index>=fit_size else adv_cho_menu_size-(adv_cho_menu_size%fit_size)
         elif cho_menu_result==fit_size+adv_prefixes[0]:

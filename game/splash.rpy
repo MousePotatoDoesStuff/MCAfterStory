@@ -345,11 +345,10 @@ label splashscreen:
         "[open_game]":
             pass
         "Restore persistent data from backup":
-            "[filename]"
-            "This function is not yet available."
+            call load_persistent(config.basedir)
             jump splash_cycle
         "Create backup of persistent data":
-            "This function is not yet available."
+            call backup_persistent(config.basedir)
             jump splash_cycle
         "Erase data and start over":
             menu:
