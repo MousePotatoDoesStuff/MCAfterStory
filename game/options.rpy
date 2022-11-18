@@ -2,7 +2,7 @@
 
 # This is where you will name your mod!
 # Change "DDLC Mod Template 2.0" to your mod name (e.g. "Yuri")
-define config.name = "MC After Story 3.0: Happy Pride Month!"
+define config.name = "MC After Story 4.0"
 
 # This controls whether you want your mod name to show in the main menu.
 # If your mod name is big, it is suggested to turn this off

@@ -648,8 +648,8 @@ screen sc_edit_menu(scroll=None):
                 add sc_mgr.turn_into_command(True)[0]
 
 
-    label _(sc_mgr.turn_into_command())
-    label _(sc_mgr.turn_into_command(True))
+    label _(str(sc_mgr.turn_into_command()))
+    label _(str(sc_mgr.turn_into_command(True)))
     use sc_navigation
 
     textbutton _("Exit without inserting"):
