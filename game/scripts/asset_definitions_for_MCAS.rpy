@@ -1,1 +1,0 @@
-define audio.coffee_and_sunlight = "<from 4 loop 4>mod_assets/soundtrack/Smell_of_Coffee_in_The_Air_and_Sunlight_Beaming_Through_The_Blinds.mp3"

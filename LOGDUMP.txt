@@ -1,4 +1,0 @@
-Log dump:
-None
-[u'Monika', u'Special', u'School uniform', u'Default', u'Happy', u'default', u'default', u'Slide in from left', u'Center'](u'monika lean uniform happ', u'l11')
-[u'MC', u'Default', u'School uniform', u'Yellow', u'Annoyed', u'Open mouth', u'Closed eyes', u'Slide in from left', u'Rightmost of 4'](u'mc turned uniform yelo anno om ce', u'l44')

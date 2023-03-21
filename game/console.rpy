@@ -7,7 +7,7 @@
 image console_bg:
     "#333"
     topleft
-    alpha 0.75 size (640,180)
+    alpha 0.75 xysize (480,180)
 
 # This style declares the text appearance of the text shown in the console in-game.
 style console_text:
@@ -34,7 +34,7 @@ image console_history = ParameterizedText(style="console_text", anchor=(0,0), xp
 image console_caret = Text(">", style="console_text", anchor=(0,0), xpos=5, ypos=10)
 
 # This label calls the console used in-game for commands.
-label updateconsole(text="", history="", pausetime=0.5):
+label updateconsole(text="", history=""):
     show console_bg zorder 100
     show console_caret zorder 100
     show console_text "_" as ctext zorder 100
@@ -42,8 +42,8 @@ label updateconsole(text="", history="", pausetime=0.5):
     $ pause(len(text) / 30.0 + 0.5)
     hide ctext
     show console_text "_" as ctext zorder 100
-    call updateconsolehistory (history) from _call_updateconsolehistory
-    $ pause(pausetime)
+    call updateconsolehistory (history)
+    $ pause(0.5)
     return
 
 # This label clears all console history and commands from the console in-game.
@@ -62,7 +62,7 @@ label updateconsole_old(text="", history=""):
     show console_text "_" as ctext zorder 100
     label updateconsole_loop:
         $ currenttext = text[:textcount]
-        call drawconsole (drawtext=currenttext) from _call_drawconsole
+        call drawconsole (drawtext=currenttext)
         $ pause_duration = 0.08 - (datetime.datetime.now() - starttime).microseconds / 1000.0 / 1000.0
         $ starttime = datetime.datetime.now()
         if pause_duration > 0:
@@ -74,7 +74,7 @@ label updateconsole_old(text="", history=""):
     $ pause(0.5)
     hide ctext
     show console_text "_" as ctext zorder 100
-    call updateconsolehistory (history) from _call_updateconsolehistory_1
+    call updateconsolehistory (history)
     $ pause(0.5)
     return
 

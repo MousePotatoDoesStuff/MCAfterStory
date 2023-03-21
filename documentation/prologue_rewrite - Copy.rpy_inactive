@@ -1,0 +1,305 @@
+Residential area:
+
+mc "*Sigh*"
+    "Yet another peaceful morning wouldn't have been spoiled, if it wasn't on Monday."
+    "Dozens of couples and friend groups walking to school together fill up the streets, making them overly crowded."
+    "I've always walked to school alone, but… There's a weird feeling… Like I used to have someone accompanying me on my morning trips."
+    "I clap my cheeks a few times. Is it loneliness messing with my mind or am I just tired? Nevertheless, I have to go, otherwise I'll be late."
+    "The new school year just started, meaning we will again be offered many club activities, but no clubs caught my attention so far."
+    "I had some thoughts over attending an anime one, but seeing its members made me change my mind."
+    "I better just get by on the average while spending my free time on games and anime."
+    "Let's just get this over with..."
+
+Class day:
+
+"This class is taking forever..."
+    "I can roughly understand what is going on, but it wouldn't matter much either way."
+    "I look around the classroom, seeking something interesting to occupy my thoughts. No success there. Most of the class seems to be as bored as I am."
+    "..."
+    "Instead I secretly open a copy of {i}Half Piece Redux{/i} under the desk, also grabbing my notebook."
+    "..."
+    "Not long after, I get called out."
+    t "[mc_name]?"
+    mc "Uh, yes?"
+    t "What role does mitochondria have in a cell?"
+    mc "It's the powerhouse of the cell."
+    t "What nitrogenous base in RNA pairs with adenine in DNA?"
+    mc "Uracil."
+    t "What are you holding under your desk?"
+    mc "My notebook."
+    "I pull it out, showing its content to the teacher."
+mc "I had a summary of the class written down and was just making sure to memorize it"
+“Barely holding the giggle, as the teacher nods, I put my notebook back under the desk and proceed reading my manga."
+"Luckily the rest of the class went with no interruptions. As the bell rang, I sneaked the book in my schoolbag and gently leaned back."
+"Everyone's within their respectable groups and I'm here sitting all by myself... I might as well go have a chat."
+"However the moment I stand up something absurd hits me. I don't remember any names. In fact, I don't recall anything about these people, despite them looking quite familiar. What's up with me? Did I not have enough sleep tonight?"
+"I scratch my forehead in confusion and decide to walk out of the classroom to catch some fresh air."
+
+Corridor:
+
+"It is unusually quiet here. Only a few random students hang out by the windows. I take a deep breath, as my glance falls over the bulletin boards."
+"I come by the one featuring school clubs, trying not to think about my partial memory loss."
+"Drama club, debate club, anime club, fight club… What even is the last one? Nevertheless, all the bulletins contain presidents' names and contact information, except for one…"
+mc "Huh? Literature club?"
+"It even has a small poster, featuring nothing but its name. The rest of the space is blank, almost like they forgot to fill it up. Looks like some kind of a joke… But since it's a literature club, they might be into manga?"
+"I stare blankly at the wall for a moment."
+"Did this empty brochure {i}actually{/i} catch my interest?"
+"I sigh and examine the poster for a bit longer, yet still failing to find any useful information. Somehow this got me interested. Considering I've got nothing to do during the long break, it wouldn't be a bad idea to figure out what's up with this literature club."
+"I briefly scan the rest of the billboard and find a small note stating \“Council member responsible for club management temporarily occupied room 307. If you have any questions related, please proceed to the said classroom.\""
+"They must be the person I need to figure the situation out."
+"I nod to myself and begin making my way to the third floor… But suddenly bump into someone."
+mc “Sorry, I was in a rush and didn't really pay attention to the surroundings…"
+"The guy seems to be a third-grader. He gave me an awkwardly emotionless look, then stepped aside and kept going further, completely ignoring my words."
+mc "What a weirdo."
+"I mutter and then proceed to my destination."
+"Things do not go the right way today at all. I still can't recall any of my classmates' names… Maybe I should give some therapist a visit, because something seems to be wrong with my memory."
+"As I'm approaching the third floor, I stop right in the middle of the staircase and lean on the wall."
+"Something simple. I need something simple… Ah, right. My name. It's [mc_name]. Well, that was easy. What else? Family, I guess?"
+"I spend some time thinking about my parents, but to my dismay I remember nothing. I always lived on my own, yet I still feel like I actually do have parents… Deja vu. Same feeling to the one from the morning."
+"I…"
+"What the hell is happening to me?"
+"I cup my head in the hands and take a deep breath."
+"Alright, [mc_name], calm down. You are not dead, you just lost some memories. Bringing this up right at the school will surely cause too much unwanted attention, so you better get on with the school day and then just visit a therapist…"
+"With this concluded, I clap my cheeks, take another deep breath and proceed to the councilor's temporary office."
+
+Club Day:
+
+
+
+"I look inside the classroom, knocking on the opened door."
+    mc "May I come in?"
+    co "Yes, you may."
+    "I walk inside and take a brief look around. Just an ordinary classroom. Councilor's sitting at the teacher's desk with several stacks of paper by him."
+    "I still feel a bit nervous due to the memory issues I've discovered, but do my best to stay calm."
+    co "I guess you've seen the note. The council's office is currently being renovated, so we borrowed this unused classroom. Other members are away, busy with their own duties, so if you have any questions ask me."
+    mc "Oh, well… I wanted to talk about the literature club. Its brochure doesn't have any contact information or a president's name. It contains nothing besides the club's name."
+    co "Literature club?"
+    "He grabs a list of something and looks through it."
+    co "Hm, you're right. The club is there, but no data is present. One moment, let me double-check…"
+    "He starts typing something into his computer."
+    $ pause(2)
+    co "As expected, there's no such club registered."
+    co "It's probably a clerical error. You should look for another club to join."
+    "Then, I come up with an idea."
+    mc "If the literature club doesn't exist, does that mean I can start it?"
+    co "So you want to start a literature club?"
+    "In fact, I wasn't really interested in running a literature club. However, I'll be the one in charge, I might at least find other manga readers besides those nerds from the anime club…"
+    "Either way, not a lot of students have an interest in literature, so I probably won't have to do much about the club."
+    "Also that should stop teachers teasing me for my lack of extracurricular activities. And hopefully this will result in a less biased attitude."
+    mc "Yes, I do."
+    "The councilor pulls out a short form from under the desk and slides it over to me."
+    co "Just fill in your name and phone or email here."
+    "Okay, let's see how this goes."
+    menu:
+        "Fill the document.":
+            "Done."
+    $ quick_menu=False
+    stop music
+    "I begin to feel quite dizzy for some reason. Then, all of a sudden a severe headache hits me."
+    call glitch(0.25)
+    scene bg club_day3
+    mc "A-A-A-A-A!"
+    "A scream comes out of my mind, as the visions appear right in front of my eyes. I don't see the councilor anymore and… Every moment it… Gets… Harder to think."
+    call glitch(0.25)
+    "{i}PAIN.{/i}" #We need some really bold and noticeable text here. I just don't know how to make it. Same applies for following italic words.
+    scene bg kitchen
+    mc "My… Head…"
+    call glitch(0.5)
+    "{i}TEARS.{/i}"
+    scene bg bedroom
+    mc "A-A-A-I CAN'T!"
+    call glitch(0.5)
+    "{i}MERCY.{/i}"
+    show s_kill_bg2
+    mc "WHAT THE—"
+    call glitch(0.5)
+    "{i}HELP.{/i}"
+    return
+
+Code void: 
+
+    scene code_void
+    play music m1
+    show mc turned worr om at t11
+
+“A-A-A-A—"
+The weak scream is cut short as the boy drops to his knees. Coughing, he attempts to catch the breath and nudges his chest with the right hand. 
+
+The left one, extensively trembling, cannot hold him in place, so he collapses on the ground and curls up into a ball, suffocating and groaning through harsh pain.
+
+Time slowly passes and eventually [mc_name] calms down and normalizes his breathing. He puts his best efforts into standing up and hardly manages to do so. Shaking legs make it look like he is going to fall back down any moment, as there are no walls around to lean on.
+
+He sighs deeply and glances around the place appearing to be some sort of a void. Pitch black surroundings with the only source of light being faraway lines of letters and words, written in certain patterns.
+
+    mc "What is this place?"
+    show mc turned dist om
+    mc "I can't see anything but weird words all over the place."
+    show mc turned worr om at t11
+    mc "Am I asleep? Is this some weird dream?"
+    show mc turned doub om at t11
+    mc "Wait, no, I was in the councilor office just now. I didn't fall asleep..."
+    show mc turned worr om at t11
+    mc "{i}Am I in a coma?{/i}"
+    show mc turned vsur om at t11
+    mc "{b}{i}AM I DEAD?!?{/i}{/b}"
+    show mc turned worr ce at t11
+    mc "... Okay, calm down, [mc_name]. Let's see what we have here."
+    show mc turned worr oe at t11
+    mc "I seem to be standing in a strange void."
+    mc "The air seems fine - or at least I can't sense anything wrong with it."
+    show mc turned dist oe at t11
+    mc "I can't see the ground I'm standing on, but it seems solid..."
+    show mc turned dist ce at t11
+    "[mc_name] proceeds to stomp the ground."
+    show mc turned dist cm ce at t11
+    mc "(Nothing interesting happened.)"
+    show mc turned dist cm oe at t11
+    mc "(These words all have different colors, and there seems to be a pattern in them.)"
+    show mc turned curi cm oe
+    mc "And if I look hard in this one particular direction, I can see what looks like a..."
+    show mc turned shoc cm oe
+    mc "......."
+    show mc turned shoc om oe
+    mc "Who the hell are YOU?!?"
+
+label ch0_4_test:
+    python:
+        cho_menu_list = [("[mc_name]",membase(['4a']),True),
+        ('The councilor.',membase(['4b']),True),
+        ('God.',membase(['4c']),True),
+        ('Monika.',membase(['4d']),True),
+        ('Sayori.',membase(['4e']),True),
+        ('The player.',membase(['4f']),True)]
+    return
+
+label ch0_4a:
+    if eventCallType!=1:
+        scene code_void
+    show mc turned shoc om oe at t11
+    mc "...You are me?"
+    show mc turned doub om oe
+    mc "That doesn't make sense. I am me."
+    mc "We can't both be me at the same time..."
+    jump ch0_4th3
+
+label ch0_4b:
+    if eventCallType!=1:
+        scene code_void
+    show mc turned doub om oe at t11
+    mc "You don't really look like him..."
+    mc "But sure, I'll believe you for now."
+    jump ch0_4th2
+
+label ch0_4c:
+    if eventCallType!=1:
+        scene code_void
+    show mc turned shoc om oe at t11
+    mc "So...does that mean I am dead?"
+    show mc turned doub om oe
+    mc "What did I even die of?"
+    jump ch0_4th3
+
+label ch0_4d:
+    if eventCallType!=1:
+        scene code_void
+    show mc turned doub om oe at t11
+    mc "For some reason, I remember this person...and I remember they look nothing like you."
+    jump ch0_4th1
+
+label ch0_4e:
+    if eventCallType!=1:
+        scene code_void
+    show mc turned doub om oe at t11
+    mc "For some reason, I remember this person...and I remember they look nothing like you."
+    jump ch0_4th1
+
+label ch0_4f:
+    if eventCallType!=1:
+        scene code_void
+    show mc turned shoc om oe at t11
+    mc "The what?"
+    mc "Are you suggesting this is all just some kind of ... game?"
+    jump ch0_4th3
+
+label ch0_4th1:
+    show mc turned doub om oe
+    mc "I guess I am in a coma after all. Or dyi-{nw}"
+    mc "No, I don't want to think about that."
+    jump ch0_4end
+
+label ch0_4th2:
+    show mc turned doub om oe
+    mc "This must be some kind of weird therapy, then?"
+    mc "..."
+    jump ch0_4end
+
+label ch0_4th3:
+    show mc turned doub om oe
+    mc "No... I must be going crazy..."
+    mc "Yeah, that would explain seeing you."
+    mc "I somehow snapped and am now seeing voices and hearing faces."
+    show mc turned doub cm ce
+    mc "..."
+    show mc turned doub om ce
+    mc "I need to get out of this."
+    mc "I need to wake up or something..."
+    show mc turned doub cm ce
+    "[mc_name] tries to pinch himself awake, to no avail."
+    jump ch0_4end
+
+label ch0_4end:
+    show mc turned doub cm ce
+    mc "..."
+    mc "Maybe you can ask me some questions or something?"
+    python:
+        for var_el in ['Sayori','Monika','Natsuki','Yuri','Libitina']:
+            persistent.questions['Do you remember '+var_el+'?']=membase([var_el])
+    return
+
+label ch0_Sayori:
+    $ checkIDtheft=MC.load(membase(['4e']))
+    if checkIDtheft is not None:
+        mc "The one you tried to pass yourself off as?"
+    $ checkOtherQuestion=MC.load(membase(['Monika']),cur_time=var_time)
+    if checkOtherQuestion:
+        mc "She also looks nothing like you."
+    else:
+        mc "I know she looks nothing like you..."
+        mc "...at least, nothing like what you look to me."
+    mc "I also feel a certain fondness when thinking of her."
+    mc "Were we friends? {w=1}Or perhaps more?"
+    return
+
+label ch0_Monika:
+    $ checkIDtheft=MC.load(membase(['4d']))
+    if checkIDtheft is not None:
+        mc "The one you tried to pass yourself off as?"
+    $ checkOtherQuestion=MC.load(membase(['Sayori']),cur_time=var_time)
+    if checkOtherQuestion:
+        mc "She also looks nothing like you."
+    else:
+        mc "I know she looks nothing like you..."
+        mc "...at least, nothing like what you look to me."
+    mc "I feel a certain distance when thinking of her."
+    mc "As if she was completely out of my league or something..."
+    return
+
+label ch0_Natsuki:
+    mc "...{w=1}Who?"
+    return
+
+label ch0_Yuri:
+    mc "Ah yes, of couse I know about Yuri."
+    mc "..."
+    mc "We're taking about the first guy to go to space, right?"
+    mc "Yuri Gagarin?"
+    mc "..."
+    mc "No?"
+    mc "I'm sorry, but I don't remember any other Yuri."
+    return
+
+label ch0_Libitina:
+    stop music
+    call glitch(0.25)
+    mc "Huh? Did you say something?"
+    return

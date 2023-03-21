@@ -10,19 +10,7 @@
 # Images are defined after the main poem game loop.
 
 init python: # This whole block runs when DDLC is started (as opposed to when the poem minigame is called)
-    import random
-
-    # This if/else statement checks if we are on Android and on 6.99.12.4
-    # to write 'poemwords.txt' to Android/data/[mod_name]/game for reading.
-    if renpy.android and renpy.version_tuple == (6, 99, 12, 4, 2187): 
-        poem_txt = os.environ['ANDROID_PUBLIC'] + "/game/poemwords.txt"
-        try:
-            if not os.access(os.environ['ANDROID_PUBLIC'] + "/game/", os.F_OK):
-                os.mkdir(os.environ['ANDROID_PUBLIC'] + "/game")
-            file(poem_txt)
-        except: open(poem_txt, "wb").write(renpy.file("poemwords.txt").read())
-    else:
-        poem_txt = "poemwords.txt"
+    poem_txt = "poemwords.txt"
 
     # This class holds a word, and point values for each of the four heroines
     class PoemWord:
@@ -41,10 +29,10 @@ init python: # This whole block runs when DDLC is started (as opposed to when th
     full_wordlist = []
     with renpy.file(poem_txt) as wordfile:
         for line in wordfile:
-            # Ignore lines beginning with '#' and empty lines
-            line = line.strip()
+            line = line.decode("utf-8").strip()
 
-            if line == '' or line[0] == '#': continue
+            # Ignore lines beginning with '#' and empty lines
+            if line == '' or '#' in line: continue
 
             # File format: word,sPoint,nPoint,yPoint
             x = line.split(',')
@@ -74,32 +62,33 @@ init python: # This whole block runs when DDLC is started (as opposed to when th
 #These are used in the image definitions.
 
     def randomPauseSayori(trans, st, at):
+        global sayoriTime
         if st > sayoriTime:
-            global sayoriTime
             sayoriTime = renpy.random.random() * 4 + 4
             return None
         return 0
 
     def randomPauseNatsuki(trans, st, at):
+        global natsukiTime
         if st > natsukiTime:
-            global natsukiTime
             natsukiTime = renpy.random.random() * 4 + 4
             return None
         return 0
 
     def randomPauseYuri(trans, st, at):
+        global yuriTime
         if st > yuriTime:
-            global yuriTime
             yuriTime = renpy.random.random() * 4 + 4
             return None
         return 0
 
     def randomPauseMonika(trans, st, at):
+        global monikaTime
         if st > monikaTime:
-            global monikaTime
             monikaTime = renpy.random.random() * 4 + 4
             return None
         return 0
+
 ##############These functions define random movements for the stickers.#######
     def randomMoveSayori(trans, st, at):
         global sayoriPos
@@ -190,8 +179,6 @@ init python: # This whole block runs when DDLC is started (as opposed to when th
         return 0
 
 ##################################################################################
-
-
 label poem(transition=True):
     stop music fadeout 2.0
     if persistent.playthrough == 3: #Takes us to the glitched notebook if we're in Just Monika Mode.
