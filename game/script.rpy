@@ -23,10 +23,10 @@ label start:
     #   $ mi_name = "Mike". 
     # Don't forget to add the character to 'definitions.rpy'!
     $ professor = "Professor"
-    $ councilor = "Councilor"
+    $ councilor = "Counselor"
     $ mc_name = persistent.mcname
-    $ s_name = "Oddly familliar voice"
-    $ m_name = "Ominous voice"
+    $ s_name = "Oddly Familliar Voice"
+    $ m_name = "Ominous Voice"
     $ n_name = "None"
     $ y_name = "NULL"
 
