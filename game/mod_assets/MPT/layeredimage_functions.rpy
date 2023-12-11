@@ -10,7 +10,7 @@ init python:
             return
         renpy.show("monika " + pose + " refreshattribute",layer=target)
         renpy.show("monika",layer=target)
-    
+
     def sref(target="master"):
         if not "sayori" in renpy.get_showing_tags(layer=target, sort=True):
             #If not currently showing this sprite, stop function.
@@ -21,7 +21,7 @@ init python:
             return
         renpy.show("sayori " + pose + " refreshattribute",layer=target)
         renpy.show("sayori",layer=target)
-    
+
     def nref(target="master"):
         if not "natsuki" in renpy.get_showing_tags(layer=target, sort=True):
             #If not currently showing this sprite, stop function.
@@ -32,7 +32,7 @@ init python:
             return
         renpy.show("natsuki " + pose + " refreshattribute",layer=target)
         renpy.show("natsuki",layer=target)
-    
+
     def yref(target="master"):
         if not "yuri" in renpy.get_showing_tags(layer=target, sort=True):
             #If not currently showing this sprite, stop function.
@@ -44,10 +44,31 @@ init python:
         renpy.show("yuri " + pose + " refreshattribute",layer=target)
         renpy.show("yuri",layer=target)
 
+    def mcref(target="master"):
+        if not "mc" in renpy.get_showing_tags(layer=target, sort=True):
+            #If not currently showing this sprite, stop function.
+            return
+        pose = str(renpy.get_attributes("mc",layer=target)[0])
+        if pose == "":
+            #Nope out if there's no actual pose here.
+            return
+        renpy.show("mc " + pose + " refreshattribute",layer=target)
+        renpy.show("mc",layer=target)
+
+    def chadref(target="master"):
+        if not "chadmc" in renpy.get_showing_tags(layer=target, sort=True):
+            #If not currently showing this sprite, stop function.
+            return
+        pose = str(renpy.get_attributes("chadmc",layer=target)[0])
+        if pose == "":
+            #Nope out if there's no actual pose here.
+            return
+        renpy.show("chadmc " + pose + " refreshattribute",layer=target)
+        renpy.show("chadmc",layer=target)
+
 screen layeredimagetool_stats():
     vbox:
         text "Current character is " + character + ", current position is " + position_displayable size 20
         text "Last input was " + posename size 20
         #text "Commands ('x' = first letter of character's name):" size 20
         #text "'menu' 'restart' 'clear' 'clear_x' 'xref'" size 20
-        

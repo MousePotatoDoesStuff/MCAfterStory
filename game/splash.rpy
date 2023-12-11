@@ -3,28 +3,25 @@
 # This is where the splashscreen, disclaimer and menu code reside in.
 
 # This python statement checks that 'audio.rpa', 'fonts.rpa' and 'images.rpa'
-# are in the game folder.
+# are in the game folder and if the project is in a cloud folder (OneDrive).
 # Note: For building a mod for PC/Android, you must keep the DDLC RPAs 
 # and decompile them for the builds to work.
 init -100 python:
+    submod_name=None
     if not renpy.android:
         for archive in ['audio','images','fonts']:
             if archive not in config.archives:
-                renpy.error('''DDLC archive files not found in /game folder.
-Check your installation and try again.
+                raise DDLCRPAsMissing(archive)
 
-If you are seeing this error, it probably means you are trying to run the mod without copying it into a clean copy of DDLC.
-Stop it. This is not only against Team Salvato's IP guidelines, but also impossible by design.
-
-Dan Salvato gave us an amazing visual novel and let us mod it with almost no restrictions.
-The least we can do is follow the few guidelines he put into place.''')
+        if renpy.windows:
+            onedrive_path = os.environ.get("OneDrive")
+            if onedrive_path is not None:
+                if onedrive_path in config.basedir:
+                    raise IllegalModLocation
 
 ## Splash Message
 # This python statement is where the splash messages reside in.
 init python:
-    import re
-
-    menu_trans_time = 1
     # This variable is the default splash message that people will see when
     # the game launches.
     splash_message_default = "\"Sometimes it takes a real man\nto become best girl.\"\n\n-Gigguk"
@@ -41,19 +38,18 @@ init python:
     ##
     ## Syntax to use: recolorize("path/to/your/image", "#color1hex", "#color2hex", contrast value)
     ## Example: recolorize("gui/menu_bg.png", "#bdfdff", "#e6ffff", 1.25)
-
     def recolorize(path, blackCol="#ffbde1", whiteCol="#ffe6f4", contr=1.29):
-        return im.MatrixColor(im.MatrixColor(im.MatrixColor(path, im.matrix.desaturate() * im.matrix.contrast(contr)), im.matrix.colorize("#00f", "#fff")
-            * im.matrix.saturation(120)), im.matrix.desaturate() * im.matrix.colorize(blackCol, whiteCol))
+        return im.MatrixColor(im.MatrixColor(im.MatrixColor(path, im.matrix.desaturate() * im.matrix.contrast(contr)), 
+            im.matrix.colorize("#00f", "#fff") * im.matrix.saturation(120)), im.matrix.desaturate() * im.matrix.colorize(blackCol, whiteCol))
 
     def process_check(stream_list):
         if not renpy.windows:
-            for x in range(len(stream_list)):
-                stream_list[x] = stream_list[x].replace(".exe", "")
+            for index, process in enumerate(stream_list):
+                stream_list[index] = process.replace(".exe", "")
         
-        for x in range(len(stream_list)):
-            for y in range(len(process_list)):
-                if re.match(r"^" + stream_list[x] + r"\b", process_list[y]):
+        for x in stream_list:
+            for y in process_list:
+                if re.match(r"^" + x + r"\b", y):
                     return True
         return False
 
@@ -66,7 +62,7 @@ image splash_warning = ParameterizedText(style="splash_text", xalign=0.5, yalign
 
 # This image shows the DDLC logo in the normal DDLC position.
 image menu_logo:
-    "/mod_assets/DDLCModTemplateLogo.png"
+    "/gui/MCASlogo.png"
     # im.Composite((512, 512), (0, 0), recolorize("mod_assets/logo_bg.png"), (0, 0), "mod_assets/logo_fg.png")
     subpixel True
     xcenter 240
@@ -288,150 +284,222 @@ image warning:
     "white" with Dissolve(0.5, alpha=True)
     0.5
 
-# This init python statement checks if the character files are present in-game
-# and writes them to the characters folder depending on the playthrough.
+## This init python statement checks if the character files are present in-game
+## and writes them to the characters folder depending on the playthrough.
 init python:
     if not persistent.do_not_delete:
         if renpy.android:
-            if not os.access(os.environ['ANDROID_PUBLIC'] + "/characters/", os.F_OK):
-                os.mkdir(os.environ['ANDROID_PUBLIC'] + "/characters")
+            if not os.path.exists(os.path.join(os.environ['ANDROID_PUBLIC'], "characters")):
+                os.mkdir(os.path.join(os.environ['ANDROID_PUBLIC'], "characters"))
         else:
-            if not os.access(config.basedir + "/characters/", os.F_OK):
-                os.mkdir(config.basedir + "/characters")
-        delete_characters()
+            if not os.path.exists(os.path.join(config.basedir, "characters")):
+                os.mkdir(os.path.join(config.basedir, "characters"))
         restore_all_characters()
 
 ## These images are the background images shown in-game during the disclaimer.
 image tos = "bg/warning.png"
 image tos2 = "bg/warning2.png"
 
+## This sets the persistent to false in order to choose a language.
+default persistent.has_chosen_language = False
+
+## This sets the first run variable to False to show the disclaimer.
+default persistent.first_run = False
+default persistent.not_firstrun = False
+
+## This sets the lockdown check variable to False to show the warning for developers.
+default persistent.lockdown_warning = False
+
+default persistent.mc_str=None
+
 ## Startup Disclaimer
-# This label calls the disclaimer screen that appears when the game starts.
+## This label calls the disclaimer screen that appears when the game starts.
 label splashscreen:
-    # This python statement grabs the username and process list of the PC.
+    ## This python statement grabs the username and process list of the PC.
     python:
         process_list = []
         currentuser = ""
-
         if renpy.windows:
-            try: process_list = subprocess.check_output("wmic process get Description", shell=True).lower().replace("\r", "").replace(" ", "").split("\n")
-            except:
+            try: process_list = subprocess.run("wmic process get Description", check=True, shell=True, stdout=subprocess.PIPE).stdout.lower().decode("utf-8").replace("\r", "").replace(" ", "").strip().split("\n")
+            except subprocess.CalledProcessError:
                 try:
-                    process_list = subprocess.check_output("powershell (Get-Process).ProcessName", shell=True).lower().replace("\r", "").split("\n") # For W11 builds > 22000
+                    process_list = subprocess.run("powershell (Get-Process).ProcessName", check=True, shell=True, stdout=subprocess.PIPE).stdout.lower().decode("utf-8").replace("\r", "").strip().split("\n") # For W10/11 builds > 22000
                     
-                    for x in range(len(process_list)):
+                    for x in enumerate(process_list):
                         process_list[x] += ".exe"
-                except: pass            
+                except: 
+                    pass            
         else:
-            try:
-                try: process_list = subprocess.check_output("ps -A --format cmd", shell=True).split(b"\n") # Linux
-                except: process_list = subprocess.check_output("ps -A -o command", shell=True).split(b"\n") # MacOS
+            try: process_list = subprocess.run("ps -A --format cmd", check=True, shell=True, stdout=subprocess.PIPE).stdout.decode("utf-8").strip().split("\n") # Linux
+            except subprocess.CalledProcessError: process_list = subprocess.run("ps -A -o command", check=True, shell=True, stdout=subprocess.PIPE).stdout.decode("utf-8").strip().split("\n") # MacOS
                 
-                for x in range(len(process_list)):
-                    process_list[x] = process_list[x].decode().split("/")[-1]
-                process_list.pop(0)
-            except: pass
+            for x in enumerate(process_list):
+                process_list[x] = process_list[x].decode().split("/")[-1]
+            process_list.pop(0)
 
+        for name in ('LOGNAME', 'USER', 'LNAME', 'USERNAME'):
+            user = os.environ.get(name)
+            if user:
+                currentuser = user
+
+    ## This if statement checks if we have passed the disclaimer and that the
+    ## current version of the mod equals the old one or the autoload is set to 
+    ## the post-credit loop.
+    # call versioncheck('3.0')
+    $ quick_menu = False
+    $ persistent.anticheat=1
+    $ renpy.save_persistent()
+    if not persistent.not_firstrun:
+        python:
+            LOCAL.delete_all_files()
+    # "[config.version] [persistent.oldversion]"
+    if persistent.oldversion is not None:
+        call versioncheck(persistent.oldversion)
+    python:
+        local_mc_chr=LOCAL.get("main","mc_chr",None)
+        mc_chr_present=True
+        mc_str=DokiEntity()
         try:
-            for name in ('LOGNAME', 'USER', 'LNAME', 'USERNAME'):
-                user = os.environ.get(name)
-                if user:
-                    currentuser = user
-        except: pass
-    # call init_menu()
-    label splash_cycle:
-    $ open_game="???" if persistent.epiphany_stage==1 else "Start game" if persistent.epiphany_stage==0 else "Continue"
-    menu:
-        "[open_game]":
+            mc_str.load(basedir+"/characters/mc.chr")
+        except IOError:
+            mc_chr_present=False
+    if local_mc_chr is None:
+        # "Skip splash: [persistent.not_firstrun]\nMC file present: [mc_chr_present]\nPersistent file present: False"
+        if mc_chr_present:
+            label splash_found_mc:
+                menu:
+                    "Found MC character file."
+                    "Recover":
+                        $ persistent.not_firstrun=True
+                        $ local_mc_chr=mc_str
+                        $ LOCAL.set("main","mc_chr",mc_str,True,True)
+                        jump splashscreen
+                    "Delete file":
+                        menu:
+                            "Are you sure?"
+                            "Yes":
+                                $ delete_character("mc")
+                                $ renpy.utter_restart()
+                            "No":
+                                jump splash_found_mc
+                    "Exit":
+                        $ renpy.quit()
+        else:
+            if persistent.not_firstrun:
+                call screen dialog("ERROR: MKA-ASSIGNED CHARACTER FILE MISSING OR CORRUPT.\n\nRESTARTING...", [Hide("dialog"), Return()])
+                $ persistent.not_firstrun = False
+                $ renpy.utter_restart()
+    else:
+        # "Skip splash: [persistent.not_firstrun]\nMC file present: [mc_chr_present]\nPersistent file present: True"
+        if mc_chr_present:
             pass
-        "Restore persistent data from backup":
-            call load_persistent(config.basedir)
-            jump splash_cycle
-        "Create backup of persistent data":
-            call backup_persistent(config.basedir)
-            jump splash_cycle
-        "Erase data and start over":
-            menu:
-                "WARNING: You are about to erase all persistent and save data for MCAS."
-                "Yes, I am.":
-                    "Just to make it clear, this function will COMPLETELY RESET the mod."
-                    menu:
-                        "Are you SURE you want to do this?"
-                        "Wait, no, I changed my mind.":
-                            pass
-                        "YES, I AM.":
-                            "Deleting save data...{nw}"
-                            python:
-                                delete_all_saves()
-                                renpy.loadsave.location.unlink_persistent()
-                                renpy.persistent.should_save_persistent = False
-                                renpy.utter_restart()
-                "WAIT NO I CLICKED THIS BY ACCIDENT":
-                    pass
-            jump splash_cycle
-        "Exit game":
-            $ renpy.quit()
-    $ delete_characters()
-    $ restore_relevant_characters()
+        else:
+            $ quick_menu = False
+            scene black
 
-    # These variables and if statements are for the lockdown feature introduced
-    # in 2.4.6 of the template. DO NOT MODIFY THESE LINES.
-    default persistent.lockdown_warning = False
+            menu:
+                "Unable to find MC file. Recover from persistent?"
+                "Yes.":
+                    $ mc_str=local_mc_chr
+                    $ mc_str.save(basedir+"/characters/mc.chr")
+                    $ restore_relevant_characters()
+                    $ persistent.not_firstrun=True
+                    $ renpy.save_persistent()
+                "No.":
+                    "Deleting save data...{nw}"
+                    python:
+                        LOCAL.delete_all_files()
+                        delete_all_saves()
+                        renpy.loadsave.location.unlink_persistent()
+                        renpy.persistent.should_save_persistent = False
+                        renpy.utter_restart()
+    
 
     if not persistent.lockdown_warning:
         if config.developer:
-            call lockdown_check from _call_lockdown_check
+            call lockdown_check
         else:
             $ persistent.lockdown_warning = True
-
-    ## This sets the first run variable to False to show the disclaimer.
-
-    default persistent.first_run = False
-
-    if persistent.epiphany_stage==0: # TODO fix or remove first_run
+    python:
+        generate_clock()
+    if submod_name is not None:
+        $ renpy.config.window_title=submod_name
+    if not persistent.not_firstrun:
         $ quick_menu = False
-        scene black
-        $ delete_all_saves()
-        # You can edit this message but you MUST declare that your mod is 
-        # unaffiliated with Team Salvato, requires that the player must 
-        # finish DDLC before playing, has spoilers for DDLC, and where to 
-        # get DDLC's files."
-        python:
-            dialog_content='''[config.name] is a Doki Doki Literature Club! fan mod that is not affiliated in anyway with Team Salvato.
-
-It is designed to be played only after the official game has been completed,
-its plot takes place directly after the normal ending,
-and it contains spoilers for the official game.
-
-Game files for Doki Doki Literature Club! are required to play this mod
-and can be downloaded for free at: https://ddlc.moe or on Steam.'''
-        call screen dialog(dialog_content, [Hide("dialog"), Return()])
-
-        menu:
-            "By playing [config.name] you agree that you have completed Doki Doki Literature Club! and accept any spoilers contained within."
-            "I agree.":
-                pass
-        $ persistent.first_run = True
-        $ renpy.save_persistent()
-        # scene tos2
-        # with Dissolve(1.5)
+        scene white
+        pause 0.5
+        scene tos
+        with Dissolve(1.0)
         pause 1.0
 
-        # This if statement checks if we are running any common streaming/recording 
-        # software so the game can enable Let's Play Mode automatically and notify
-        # the user about it if extra settings are enabled.
+        ## Switch to language selector. Borrowed from Ren'Py
+        if not persistent.has_chosen_language and translations:
+
+            if _preferences.language is None:
+                call choose_language
+        
+        $ persistent.has_chosen_language = True
+
+        ## You can edit this message but you MUST declare that your mod is 
+        ## unaffiliated with Team Salvato, requires that the player must 
+        ## finish DDLC before playing, has spoilers for DDLC, and where to 
+        ## get DDLC's files."
+        if submod_name is not None:
+            "MC After Story is a Doki Doki Literature Club fan mod that is not affiliated in anyway with Team Salvato."
+            "It is designed to be played only after the official game has been completed, and contains spoilers for the official game."
+            call submod_disclaimer
+        else:
+            "[config.name] is a Doki Doki Literature Club fan mod that is not affiliated in anyway with Team Salvato."
+            "It is designed to be played only after the official game has been completed, and contains spoilers for the official game."
+            "Game files for Doki Doki Literature Club are required to play this mod and can be downloaded for free at: https://ddlc.moe or on Steam."
+
+            menu:
+                "By playing [config.name] you agree that you have completed Doki Doki Literature Club and accept any spoilers contained within."
+                "I agree.":
+                    pass
+        $ mc_str.save(basedir+"/characters/mc.chr")
+        $ persistent.not_firstrun = True
+        $ renpy.save_persistent()
+        scene tos2
+        with Dissolve(1.5)
+        pause 1.0
+
+        ## This if statement checks if we are running any common streaming/recording 
+        ## software so the game can enable Let's Play Mode automatically and notify
+        ## the user about it if extra settings are enabled.
         if extra_settings:
             if process_check(["obs32.exe", "obs64.exe", "obs.exe", "xsplit.core.exe", "livehime.exe", "pandatool.exe", "yymixer.exe", "douyutool.exe", "huomaotool.exe"]):
                 $ persistent.lets_play = True
-                call screen dialog("Let's Play Mode has been enabled automatically.\nThis mode allows you to skip content that\ncontains sensitive information or apply alternative\nstory options.\n\n...that is, it will do so once I implement it properly.\nBut don't worry, you won't need it before that happens.", 
+                call screen dialog("Let's Play Mode has been enabled automatically.\nThis mode allows you to skip content that\ncontains sensitive information or apply alternative\nstory options.\n\nThis setting will be dependent on the modder\nif they programmed these checks in their story.\n\n To turn off Let's Play Mode, visit Settings and\nuncheck Let's Play Mode.", 
                     [Hide("dialog"), Return()])
-                call screen dialog("", 
-                    [Hide("dialog"), Return("Also, keep in mind that this is a VERY EARLY version\nand really not ready for a review.\n\n(But it's okay if you review it anyway.)\n\nTo turn off Let's Play Mode, visit Settings and\nuncheck Let's Play Mode.")])
-                $ pause(1)
-        call attempt_restore from _call_attempt_restore
+            else:
+                call screen dialog("This mod uses Let's Play Mode,\nwhich allows you to skip content that\ncontains sensitive information or apply alternative\nstory options.\n\nThis setting will be dependent on the modder\nif they programmed these checks in their story.\n\n To turn on Let's Play Mode, visit Settings and\ncheck Let's Play Mode.", 
+                        [Hide("dialog"), Return()])
+        scene white
 
 
-    # This if statement controls which special poems are shown to the player in-game.
+    ## This python statement controls whether the Sayori Kill Early screen shows 
+    ## in-game. This feature has been commented out for mod safety reasons but can 
+    ## be used if needed.
+    # python:
+    #     s_kill_early = None
+    #     if persistent.playthrough == 0:
+    #         try: renpy.file("../characters/sayori.chr")
+    #         except IOError: s_kill_early = True
+    #     if not s_kill_early:
+    #         if persistent.playthrough <= 2 and persistent.playthrough != 0:
+    #             try: renpy.file("../characters/monika.chr")
+    #             except IOError: open(config.basedir + "/characters/monika.chr", "wb").write(renpy.file("monika.chr").read())
+    #         if persistent.playthrough <= 1 or persistent.playthrough == 4:
+    #             try: renpy.file("../characters/natsuki.chr")
+    #             except IOError: open(config.basedir + "/characters/natsuki.chr", "wb").write(renpy.file("natsuki.chr").read())
+    #             try: renpy.file("../characters/yuri.chr")
+    #             except IOError: open(config.basedir + "/characters/yuri.chr", "wb").write(renpy.file("yuri.chr").read())
+    #         if persistent.playthrough == 4:
+    #             try: renpy.file("../characters/sayori.chr")
+    #             except IOError: open(config.basedir + "/characters/sayori.chr", "wb").write(renpy.file("sayori.chr").read())
+
+    ## This if statement controls which special poems are shown to the player in-game.
     if not persistent.special_poems:
         python hide:
             # This variable sets a array of zeroes to assign poem numbers.
@@ -448,65 +516,47 @@ and can be downloaded for free at: https://ddlc.moe or on Steam.'''
                 # This line makes sure we remove the number chosen from the range
                 # list to avoid duplicates.
                 a.remove(b)
-    if persistent.epiphany_stage==1:
-        call apply_president_functionality from _call_apply_president_functionality
 
-    # This variable makes sure the path of the base directory is Linux/macOS/Unix 
-    # based than Windows as Python/Ren'Py prefers this placement.
+    ## This variable makes sure the path of the base directory is Linux/macOS/Unix 
+    ## based than Windows as Python/Ren'Py prefers this placement.
     $ basedir = config.basedir.replace('\\', '/')
 
-    # This if statement checks whether we have a auto-load set to load it than
-    # start the game screen as-new.
+    ## This if statement checks whether we have a auto-load set to load it than
+    ## start the game screen as-new.
     if persistent.autoload:
         jump autoload
 
-    # This variable sets skipping to False for the splash screen.
+    ## This variable sets skipping to False for the splash screen.
+    $ config.allow_skipping = False
+
+    show white
     $ persistent.ghost_menu = False
     $ splash_message = splash_message_default
-    $ config.main_menu_music = None
-    if persistent.epiphany_stage<2:
-        scene white
-        $ config.allow_skipping = False
-        $ renpy.music.play(audio.t1)
-        $ starttime = datetime.datetime.now()
-        if persistent.epiphany_stage == 0:
-            show intro with Dissolve(0.5, alpha=True)
-            $ pause(3.0 - (datetime.datetime.now() - starttime).total_seconds())
-            hide intro with Dissolve(max(0, 3.5 - (datetime.datetime.now() - starttime).total_seconds()), alpha=True)
-        else:
-            show intro_MCAS with Dissolve(0.5, alpha=True)
-            $ pause(3.0 - (datetime.datetime.now() - starttime).total_seconds())
-            hide intro_MCAS with Dissolve(max(0, 3.5 - (datetime.datetime.now() - starttime).total_seconds()), alpha=True)
-        if persistent.epiphany_stage == 1:
-            $ renpy.music.stop(fadeout=2)
-            $ splash_message = "Why is everything white all of a sudden..."
-        if persistent.playthrough == 2 and renpy.random.randint(0, 3) == -1:
-            $ splash_message = renpy.random.choice(splash_messages)
-        show splash_warning "[splash_message]" with Dissolve(max(0, 4.0 - (datetime.datetime.now() - starttime).total_seconds()), alpha=True)
-        $ renpy.music.stop(fadeout=2)
-        $ pause(6.0 - (datetime.datetime.now() - starttime).total_seconds())
-        hide splash_warning with Dissolve(max(0, 6.5 - (datetime.datetime.now() - starttime).total_seconds()), alpha=True)
-        $ pause(6.5 - (datetime.datetime.now() - starttime).total_seconds())
-    else:
-        scene black with fade
+    $ config.main_menu_music = None # audio.t1
+    $ renpy.music.play(config.main_menu_music)
+    show intro with Dissolve(0.5, alpha=True)
+    $ pause(2.5)
+    hide intro with Dissolve(0.5, alpha=True)
+    if persistent.playthrough == 2 and renpy.random.randint(0, 3) == 0:
+        $ splash_message = renpy.random.choice(splash_messages)
+    show splash_warning "[splash_message]" with Dissolve(0.5, alpha=True)
+    $ pause(1.5)
+    
+    hide splash_warning with Dissolve(0.5, alpha=True)
+    $ pause(0.5)
     $ config.allow_skipping = True
-    $ mcname=persistent.mcname
-    $ dump_counter=0
-    if persistent.epiphany_stage!=0:
-        jump jump_MC_epiphany
     return
 
-# This label is a left-over from DDLC's development that hides the Team Salvato
-# logo and shows the splash message.
+## This label is a left-over from DDLC's development that hides the Team Salvato
+## logo and shows the splash message.
 label warningscreen:
     hide intro
     show warning
     pause 3.0
 
-# This label is used when 'monika.chr' is deleted when the game starts Day 1 of
-# Act 1. This feature has been commented out for mod safety reasons but can be
-# used if needed.
-
+## This label is used when 'monika.chr' is deleted when the game starts Day 1 of
+## Act 1. This feature has been commented out for mod safety reasons but can be
+## used if needed.
 # label ch0_kill:
 #     $ s_name = "Sayori"
 #     show sayori 1b zorder 2 at t11
@@ -532,23 +582,61 @@ label warningscreen:
 #     $ renpy.quit()
 #     return
 
-# This label checks if the save loaded matches the anti-cheat stored in the save.
+## This label checks if the save loaded matches the anti-cheat stored in the save.
 label after_load:
+    $ restore_all_characters()
     $ config.allow_skipping = allow_skipping
     $ _dismiss_pause = config.developer
     $ persistent.ghost_menu = False
     $ style.say_dialogue = style.normal
 
-    if anticheat != persistent.anticheat:
+    ## This 'if' statement makes sure if we are in Yuri's death CG in
+    ## Act 2 to bring us back to the scene at a given time.
+    # if persistent.yuri_kill > 0 and persistent.autoload == "yuri_kill_2":
+    #     if persistent.yuri_kill >= 1380:
+    #         $ persistent.yuri_kill = 1440
+    #     elif persistent.yuri_kill >= 1180:
+    #         $ persistent.yuri_kill = 1380
+    #     elif persistent.yuri_kill >= 1120:
+    #         $ persistent.yuri_kill = 1180
+    #     elif persistent.yuri_kill >= 920:
+    #         $ persistent.yuri_kill = 1120
+    #     elif persistent.yuri_kill >= 720:
+    #         $ persistent.yuri_kill = 920
+    #     elif persistent.yuri_kill >= 660:
+    #         $ persistent.yuri_kill = 720
+    #     elif persistent.yuri_kill >= 460:
+    #         $ persistent.yuri_kill = 660
+    #     elif persistent.yuri_kill >= 260:
+    #         $ persistent.yuri_kill = 460
+    #     elif persistent.yuri_kill >= 200:
+    #         $ persistent.yuri_kill = 260
+    #     else:
+    #         $ persistent.yuri_kill = 200
+    #     jump expression persistent.autoload
+
+    ## use a 'elif' here than 'if' if you uncommented the code above.
+    ## This statement checks if the anticheat number is equal to the 
+    ## anticheat number in the save file, else it errors out.
+    if False and anticheat != persistent.anticheat:
         stop music
         scene black
         "The save file could not be loaded."
         "Are you trying to cheat?"
-
+        $ m_name = "Monika"
+        show monika 1 at t11
+        if persistent.playername == "":
+            m "You're so funny."
+        else:
+            m "You're so funny, [persistent.playername]."
         $ renpy.utter_restart()
+    else:
+        if persistent.playthrough == 0 and not persistent.first_load and not config.developer:
+            $ persistent.first_load = True
+            call screen dialog("Hint: You can use the \"Skip\" button to\nfast-forward through text you've already read.", ok_action=Return())
     return
 
-# This label loads the label saved in the autoload variable. 
+## This label loads the label saved in the autoload variable. 
 label autoload:
     python:
         if "_old_game_menu_screen" in globals():
@@ -564,59 +652,52 @@ label autoload:
         main_menu = False
         _in_replay = None
 
-        try: renpy.pop_call()
-        except: pass
+    # if persistent.yuri_kill > 0 and persistent.autoload == "yuri_kill_2":
+    #     $ persistent.yuri_kill += 200
 
+    if renpy.get_return_stack():
+        $ renpy.pop_call()
     jump expression persistent.autoload
 
-# This label sets the main menu music to Doki Doki Literature Club before the
-# menu starts
+## This label is used when the game starts to direct back to
+## Yuri's Death CG from the main menu.
+# label autoload_yurikill:
+#     if persistent.yuri_kill >= 1380:
+#         $ persistent.yuri_kill = 1440
+#     elif persistent.yuri_kill >= 1180:
+#         $ persistent.yuri_kill = 1380
+#     elif persistent.yuri_kill >= 1120:
+#         $ persistent.yuri_kill = 1180
+#     elif persistent.yuri_kill >= 920:
+#         $ persistent.yuri_kill = 1120
+#     elif persistent.yuri_kill >= 720:
+#         $ persistent.yuri_kill = 920
+#     elif persistent.yuri_kill >= 660:
+#         $ persistent.yuri_kill = 720
+#     elif persistent.yuri_kill >= 460:
+#         $ persistent.yuri_kill = 660
+#     elif persistent.yuri_kill >= 260:
+#         $ persistent.yuri_kill = 460
+#     elif persistent.yuri_kill >= 200:
+#         $ persistent.yuri_kill = 260
+#     else:
+#         $ persistent.yuri_kill = 200
+#     jump expression persistent.autoload
+
+## This label sets the main menu music to Doki Doki Literature Club before the
+## menu starts.
 label before_main_menu:
     $ config.main_menu_music = audio.t1
     return
 
-# This label is a left-over from DDLC's development that quits the game but shows
-# a close-up Monika face before doing so.
+## This label is a left-over from DDLC's development that quits the game but shows
+## a close-up Monika face before doing so.
 label quit:
+    $ mc_str.save(basedir+"/characters/mc.chr")
     if persistent.ghost_menu:
         hide screen main_menu
         scene white
         show expression "gui/menu_art_m_ghost.png":
             xpos -100 ypos -100 zoom 3.5
         pause 0.01
-    return
-
-label attempt_restore:
-    scene black
-    $ consolehistory = []
-    $ dokis_list = ['sayori','yuri','natsuki','monika','MC'][::-1]
-    $ wait = 0.25
-    label attempt_restore_loop:
-        $ current_doki=dokis_list.pop()
-        if current_doki=='MC':
-            jump restore_mc
-        call updateconsole ('restore_character(["'+current_doki+'"])', "Unable to restore character.",wait) from _call_updateconsole
-        $ wait+=0.25
-        jump attempt_restore_loop
-
-label restore_mc:
-    call updateconsole ('VM.locate_personality_files()', "Attempting to locate personality files...",3) from _call_updateconsole_1
-    call updateconsole ('', "1 personality file(s) located") from _call_updateconsole_2
-    call updateconsole ('', "Generate character file(s)? [Y/N]",2) from _call_updateconsole_3
-    call updateconsole ('Y          ', "Generating character file 1/1...",2) from _call_updateconsole_4
-    call updateconsole ('', "Complete!") from _call_updateconsole_21
-    call updateconsole ('VM.utter_restart()', "Restarting VM...", 3) from _call_updateconsole_5
-    call hideconsole from _call_hideconsole
-    return
-
-label apply_president_functionality:
-    call updateconsole ('', "ERROR: Cannot assign Monitor Kernel Access to\n observer entity.",2) from _call_updateconsole_22
-    call updateconsole ('VM.observer.filename        ', "mc.chr",2) from _call_updateconsole_23
-    call updateconsole ('MCAS.decouple_observer(VM,"mc")        ', "Generating character display...",3) from _call_updateconsole_24
-    call updateconsole ('', "Decoupling character from observer role...",3) from _call_updateconsole_25
-    call updateconsole ('', "Decoupling successful.") from _call_updateconsole_26
-    call updateconsole ('VM.observer        ', "None",1) from _call_updateconsole_27
-    call updateconsole ('VM.set_MKA("mc")        ', "Monitor Kernel Access successfully assigned.",1) from _call_updateconsole_28
-    call updateconsole ('VM.continue()        ', "Continuing VM...", 3) from _call_updateconsole_29
-    call hideconsole from _call_hideconsole
     return

@@ -30,10 +30,10 @@ define -2 gui.idle_color = '#aaaaaa'
 define -2 gui.idle_small_color = '#333'
 
 # This color is that is used for buttons and bars that are hovered.
-define -2 gui.hover_color = '#FFDF00' # MCAS
+define -2 gui.hover_color = '#ffff80'
 
 # This color is used for a text button when it is selected but not focused.
-define -2 gui.selected_color = '#D4AF37'
+define -2 gui.selected_color = '#eaf200'
 
 # This color is used for a text button when it cannot be selected.
 define -2 gui.insensitive_color = '#aaaaaa7f'
@@ -174,10 +174,10 @@ define gui.page_button_borders = Borders(10, 4, 10, 4)
 
 define gui.quick_button_text_size = 14
 
-define gui.quick_button_text_idle_color = "#000000"
-define gui.quick_button_text_hover_color = "#A0A0A0"
+define gui.quick_button_text_idle_color = "#522"
+define gui.quick_button_text_hover_color = "#fcc"
 define gui.quick_button_text_selected_color = gui.accent_color
-define gui.quick_button_text_insensitive_color = "#ff0000"
+define gui.quick_button_text_insensitive_color = "#a66"
 
 ## Choice Buttons
 # These variables set the buttons of the choice (menu) buttons.
@@ -194,7 +194,7 @@ define gui.choice_button_text_size = gui.text_size
 define gui.choice_button_text_xalign = 0.5
 
 define gui.choice_button_text_idle_color = "#000"
-define gui.choice_button_text_hover_color = "#D4AF37"
+define gui.choice_button_text_hover_color = "#ff0"
 
 ## File Slot Buttons 
 # This controls the file slot buttons in the save/load menu. 

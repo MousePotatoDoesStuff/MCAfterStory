@@ -4,6 +4,7 @@
 # your mod's story! 
 
 label start:
+
     # This label configures the anticheat number for the game after Act 1.
     # It is recommended to leave this as-is and use the following in your script:
     #   $ persistent.anticheat = renpy.random.randint(X, Y) 
@@ -22,10 +23,10 @@ label start:
     #   $ mi_name = "Mike". 
     # Don't forget to add the character to 'definitions.rpy'!
     $ professor = "Professor"
-    $ councilor = "Councilor"
+    $ councilor = "Counselor"
     $ mc_name = persistent.mcname
-    $ s_name = "Oddly familliar voice"
-    $ m_name = "Ominous voice"
+    $ s_name = "Oddly Familliar Voice"
+    $ m_name = "Ominous Voice"
     $ n_name = "None"
     $ y_name = "NULL"
 
@@ -43,13 +44,22 @@ label start:
     # These variables controls whether the player can skip dialogue or transitions.
     $ allow_skipping = True
     $ config.allow_skipping = True
+    python:
+        def temp_loader(filename):
+            if renpy.android:
+                try: renpy.file(os.environ['ANDROID_PUBLIC'] + "/" + filename)
+                except IOError: open(os.environ['ANDROID_PUBLIC'] + "/" + filename, "wb").write(renpy.file(filename).read())
+            else:
+                try: renpy.file(config.basedir + "/" + filename)
+                except IOError: open(config.basedir + "/" + filename, "wb").write(renpy.file(filename).read())
 
     ## The Main Part of the Script
     # This is where your script code is called!
     # 'persistent.playthrough' controls the playthrough number the player is on i.e (Act 1, 2, 3, 4)
-    call intro_main from _call_intro_main
+    call init_memories
 
-# This label is where the game 'ends' during Act 1.
+
+# This label is where the game 'ends' during Act 1. (We won't need this. After Stories never end.)
 label endgame(pause_length=4.0):
     $ quick_menu = False
     stop music fadeout 2.0
