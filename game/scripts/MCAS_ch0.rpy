@@ -39,20 +39,20 @@ label ch0_1:
     "Most of the class seems to be as bored as I am."
     "..."
     "I secretly open a copy of {i}Half Piece Redux{/i} under the desk."
-    "{i}You thought this part would be a JoJo reference, but it was me, {/i}{nw}"
+    # "{i}You thought this part would be a JoJo reference, but it was me, {/i}{nw}"
     t "[mc_name]?"
     mc "Uh, yes?"
     t "What role does mitochondria have in a cell?"
-    mc "It's the powerhouse of the cell."
+    mc "...It's the powerhouse of the cell."
     t "What nitrogenous base in RNA pairs with adenine in DNA?"
-    mc "Uracil."
+    mc "...Uracil..."
     t "What are you holding under your desk?"
     mc "{i}Half Piece Redux{/i} part 723-   {nw}"
     "Whoops."
     t "This is the fifth time this month, [mc_name]."
     "The professor takes out his phone and starts typing something."
     "Am I in trouble?"
-    t "Go to the councilor's office, third floor, room 307."
+    t "Go to the counselor's office, third floor, room 307."
     "Yeah, it definitely seems like I'm in trouble."
     if eventCallType!=1:
         $ persistent.auto_open.append((membase([2]),eventCallType))
@@ -66,13 +66,13 @@ label ch0_2:
     "At least this isn't as boring as sitting in class."
     "I go across the school and upstairs - a section of the school I rarely visit, being generally used for third-year classes and activities."
     "I see a list of clubs on one of the bulletin boards."
-    mc "Drama club, debate club, anime club, Fight Club..."
+    mc "Drama Club, Debate Club, Anime Club, Sports Club..."
     "They all have club presidents and contact information listed, except for one..."
-    mc "Literature club?"
+    mc "Literature Club?"
     "I guess whoever started the club couldn't find any members and eventually gave up."
     "Or teachers started it in hope someone would get interested."
     "Either way, I am not surprised at all no one wants to join it. Studying literature is boring."
-    mc "Oh yeah, I should hurry to the councilor's office..."
+    mc "Oh yeah, I should hurry to the counselor's office..."
     if eventCallType!=1:
         $ persistent.auto_open.append((membase([3]),eventCallType))
     return
@@ -100,7 +100,7 @@ label ch0_3:
     mc "Why is there no name or contact for the literature club?"
     co "There is a literature club?"
     mc "Yes, it's right here."
-    "I return the list, and the councilor double-checks it."
+    "I return the list, and the counselor double-checks it."
     co "One moment."
     "He starts typing something into his computer."
     $ pause(2)
@@ -113,31 +113,32 @@ label ch0_3:
     "I let that slide."
     "I don't, in fact, have an interest in \"actual\" literature."
     "And I definitely don't have any interest in running a club."
-    mc "Oh well..."
+    mc "Oh, well..."
     "But from what I can tell, no other student here really has an interest in literature either."
     "So if I start this club, I won't actually have to do much about it."
     mc "...I guess this is a chance to broaden my horizons."
-    "Maybe I can somehow use it as an excuse to read {i}Half Piece Redux{/i} in class, too..."
+    "Maybe I can use this as an excuse to read my manga in class?"
     co "Sounds like all you needed was a little push."
     co "Just fill in your name and phone or email here."
     "Okay, let's see how this goes."
     menu:
         "Fill the document.":
             "Done."
+    # Revamp this scene later.
     $ quick_menu=False
     stop music
     call glitch(0.25)
     scene bg club_day3
-    mc "AAAAAAAAAAAAAAAA"
+    mc "AAAAAAAAAAAAAAAA{nw}"
     call glitch(0.25)
     scene bg kitchen
-    mc "MY HEAD"
+    mc "MY HEAD{nw}"
     call glitch(0.5)
     scene bg bedroom
-    mc "WHAT IS HAPPENING?!?"
+    mc "WHAT IS HAPPENING?!?{nw}"
     call glitch(0.5)
     show s_kill_bg2
-    mc "COUNCILOR WHAT IS HAPPENING TO ME"
+    mc "COUNSELOR WHAT IS HAPPENING TO ME{nw}"
     call glitch(0.5)
     return
 
@@ -152,6 +153,7 @@ label glitch(time=1):
     return
 
 label ch0_4:
+    # I would make MC, being granted sentience, remember everything that happened in DDLC, personally. This would cause more interesting concepts to be able to be talked about, such as MC's guilt towards treating Sayori extremely poorly, and his trauma from being forced to watch Yuri's corpse decay.
     scene code_void
     play music m1
     show mc turned worr om at t11
